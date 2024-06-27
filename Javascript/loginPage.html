@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      .loginPageWrapper {
+        width: 100%;
+      }
+
+      .loading-bar {
+        width: 329px;
+        height: 4px;
+        overflow: hidden;
+        background-color: #fff;
+        position: relative;
+        top: 0px;
+        left: 22px;
+        z-index: 10;
+      }
+
+      .loading-bar:before {
+        display: block;
+        position: absolute;
+        content: "";
+        left: 0;
+        width: 0;
+        height: 4px;
+        background-color: #0b57d0;
+        transition: none;
+      }
+
+      .loading-bar.start:before {
+        animation: loading 0.6s linear 2 forwards;
+      }
+
+      .loginRegisPageImg {
+        /* border: 1px solid black; */
+        /* padding: 15px 20px 15px; */
+      }
+
+      .loginRegisPageImg img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+      }
+
+      /* .loginTitleEmailContainer {
+        border: 1px solid black;
+      } */
+
+      .loginPasswordContainer {
+        /* border: 1px solid black; */
+        display: none;
+        position: absolute;
+        top: 103px;
+        left: 23px;
+        width: 329px;
+        height: 105px;
+        z-index: 1;
+        background: white;
+      }
+
+      .loginPasswordSubTitle {
+        border: 1px solid black;
+        border-radius: 30px;
+        width: fit-content;
+        padding: 3px 10px 3px 10px;
+        /* inset: -1px; */
+      }
+
+      .loginTitle {
+        margin-top: 24px;
+        font-size: 2rem;
+      }
+
+      .loginEmailSubTitle {
+        margin-top: 16px;
+        font-size: 1rem;
+      }
+
+      .loginPageContainer {
+        /* border: 1px solid red; */
+        position: relative;
+        
+      }
+
+      .loginPageSection1,
+      .loginPageSection2,
+      .loginPageSection3 {
+        border: 1px solid black;
+        padding: 15px 20px 15px;
+      }
+
+      .loginPageSection3 {
+        border: 1px solid black;
+        visibility: hidden;
+        position: absolute;
+        top: 33.5%;
+        left: 0%;
+        z-index: 1;
+        background: white;
+      }
+
+      .inputBox {
+        /* border: 1px solid black; */
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 15px;
+      }
+
+      .inputBox input {
+        position: relative;
+        height: 28px;
+        padding: 20px;
+        font-size: 1rem;
+        letter-spacing: 0.062rem;
+        margin-bottom: 8px;
+        border: 1px solid #1f1f1f;
+        background: transparent;
+        border-radius: 4px;
+      }
+
+      .inputBox label {
+        position: absolute;
+        top: 20px;
+        left: 10px;
+        padding: 21px 20px;
+        font-size: 1rem;
+        color: #ccc;
+        pointer-events: none;
+        transition: 0.3s;
+      }
+
+      .inputBox input:focus ~ label,
+      .inputBox input:valid ~ label,
+      .inputBox input:not([value=""]) ~ label {
+        top: 5px;
+        left: 14px;
+        color: #1a73e8;
+        font-size: 1rem;
+        background-color: #fff;
+        height: 10px;
+        padding: 6px 2px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .inputBox input:focus {
+        outline: none;
+        border: 2px solid #1a73e8;
+      }
+
+      .loginInformation {
+        padding-top: 45px;
+      }
+
+      .loginButtonContainer {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        padding-top: 15px;
+        gap: 20px;
+      }
+
+      .loginAccountBtn {
+        border-radius: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        border: none;
+        width: 100px;
+        height: 43px;
+        color: #0b57d0;
+        background: none;
+        letter-spacing: 0rem;
+        line-height: 1.42857143;
+        text-decoration: none;
+      }
+
+      .loginAccountBtn:hover {
+        background: #f5fbff;
+      }
+
+      .loginNextBtn {
+        border-radius: 40px;
+        font-size: 16px;
+        border: none;
+        width: 100px;
+        height: 43px;
+        color: #fff;
+        background: #0b57d0;
+        letter-spacing: 0rem;
+        line-height: 1.42857143;
+      }
+
+      .loginPagelangContainer {
+        padding: 30px 20px 30px;
+      }
+
+      .loginPageEtc {
+        display: flex;
+        gap: 35px;
+        width: 100%;
+      }
+
+      .langSelect {
+        height: 25px;
+        border-radius: 9px;
+        border: none;
+        background-color: transparent;
+        padding-bottom: 40px;
+      }
+
+      .langSelect select {
+        border-radius: 9px;
+        border: none;
+      }
+
+      .expand {
+        animation-name: expand;
+        animation-duration: 0.1s;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes expand {
+        from {
+          width: 0;
+        }
+        to {
+          width: 88.7%;
+          height: 39%;
+        }
+      }
+
+      @keyframes loading {
+        0% {
+          left: 0;
+          width: 0;
+        }
+        10% {
+          width: 10%;
+        }
+        50% {
+          width: 50%;
+        }
+        70% {
+          width: 70%;
+        }
+        80% {
+          width: 80%;
+        }
+        100% {
+          left: 100%;
+          width: 0;
+        }
+      }
+
+      @media only screen and (min-width: 768px) {
+        .loginPageWrapper {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background-color: #f0f4f9;
+          width: 100%;
+          min-height: 100vh;
+        }
+
+        .loginPageContainer {
+          border: none;
+          background-color: #fff;
+          display: flex;
+          flex-direction: column;
+          border-radius: 28px;
+          min-height: 528px;
+          width: 480px;
+          margin-bottom: 5px;
+          position: relative;
+        }
+
+        .loginPagelangContainer {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          height: 33px;
+          width: 461px;
+          padding: 0;
+        }
+
+        .loginPageEtc {
+          display: flex;
+          justify-content: right;
+          display: flex;
+          gap: 35px;
+          width: 100%;
+        }
+
+        .langSelect {
+          height: 25px;
+          border-radius: 9px;
+          border: none;
+          background-color: transparent;
+          padding: 0;
+        }
+
+        .langSelect select {
+          border-radius: 9px;
+          background-color: #f0f4f9;
+          border: none;
+        }
+
+        .langSelect select:focus {
+          border: #0b57d0;
+        }
+
+        .loginTitleEmailContainer {
+          /* border: 1px solid black; */
+          height: 108px;
+        }
+
+        .loginPasswordContainer {
+          display: none;
+          position: absolute;
+          top: 99px;
+          left: 20px;
+          width: 438px;
+          height: 108px;
+          z-index: 1;
+          background: white;
+        }
+
+        .loginPageSection2,
+        .loginPageSection3 {
+          border-bottom-left-radius: 28px;
+          border-bottom-right-radius: 28px;
+          width: 439px;
+        }
+
+        .loginPageSection3 {
+          visibility: hidden;
+          position: absolute;
+          top: 246px;
+          left: 0px;
+          z-index: 1;
+          background: white;
+        }
+
+        .expand {
+          animation-name: expand;
+          animation-duration: 0.1s;
+          animation-fill-mode: forwards;
+        }
+
+        @keyframes expand {
+          from {
+            width: 0;
+          }
+          to {
+            width: 439px;
+          }
+        }
+      }
+
+      @media only screen and (min-width: 1000px) {
+        .loginRegisPageWrapper {
+          /* border: 1px solid black; */
+          background-color: #f0f4f9;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          width: 100%;
+          padding: 0 100px 0 100px;
+        }
+
+        .loginPageContainer {
+          position: relative;
+          border: none;
+          background-color: #fff;
+          display: flex;
+          flex-direction: row;
+          min-height: 528px;
+          width: 60%;
+        }
+
+        .loginPageSection1,
+        .loginPageSection2,
+        .loginPageSection3 {
+          border: 1px solid black;
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+          width: 50%;
+        }
+
+        .loginPageSection1 {
+          border-bottom-left-radius: 28px;
+          border-top-left-radius: 28px;
+          /* position: relative; */
+        }
+        .loginPageSection2,
+        .loginPageSection3 {
+          border: 1px solid red;
+          border-bottom-right-radius: 28px;
+          border-top-right-radius: 28px;
+          padding-top: 128px;
+        }
+
+        .loginPageSection3 {
+          visibility: hidden;
+          position: absolute;
+          top: 0px;
+          left: 50%;
+          height: 383px;
+          width: 50%;
+          z-index: 1;
+          background: white;
+        }
+
+        .loginButtonContainer {
+          border: 1px solid black;
+          display: flex;
+          justify-content: end;
+          padding-top: 120px;
+        }
+
+        .loginInformation {
+          height: 44px;
+        }
+
+        .loginTitleEmailContainer,
+        .loginPasswordContainer {
+          border: 1px solid black;
+        }
+        .loginPasswordContainer {
+          top: 100px;
+          left: 20px;
+          width: 342px;
+        }
+
+        .expand {
+          animation-name: expand;
+          animation-duration: 0.1s;
+          animation-fill-mode: forwards;
+        }
+
+        @keyframes expand {
+          from {
+            width: 0;
+          }
+          to {
+            width: 50%;
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loginPageWrapper">
+      <div class="loading-bar"></div>
+      <div class="loginPageContainer">
+        <div class="loginPageSection1">
+          <div class="loginRegisPageImg">
+            <img
+              src="https://picsum.photos/id/870/200/300?grayscale&blur=2"
+              alt=""
+            />
+          </div>
+          <div class="loginTitleEmailContainer">
+            <div class="loginTitle">로그인</div>
+            <div class="loginEmailSubTitle">우리 계정 사용</div>
+          </div>
+          <div class="loginPasswordContainer">
+            <div class="loginTitle">시작하기</div>
+            <div class="loginPasswordSubTitle">🙄 12@12.comwefwefwef</div>
+          </div>
+        </div>
+        <div class="loginPageSection2">
+          <div class="inputBox">
+            <input
+              class="email"
+              type="email"
+              required
+              value=""
+              onkeyup="this.setAttribute('value', this.value);"
+            />
+            <label for="email">이메일 또는 휴대전화</label>
+            <div class="forgotEmailContainer">이메일을 잊으셨나요?</div>
+          </div>
+          <div class="loginButtonWrapper">
+            <div class="loginInformation">
+              내 컴퓨터가 아닌가요? 시크릿 브라우징 창을 사용하여 로그인하세요.
+            </div>
+            <div class="loginButtonContainer">
+              <a class="loginAccountBtn" href="#">계정 만들기</a>
+              <button class="loginNextBtn email-next-btn">다음</button>
+            </div>
+          </div>
+        </div>
+        <div class="loginPageSection3">
+          <div class="inputBox">
+            <input
+              class="password"
+              type="password"
+              required
+              value=""
+              onkeyup="this.setAttribute('value', this.value);"
+            />
+            <label for="password">비밀번호 입력</label>
+            <div class="forgotPasswordContainer">비밀번호를 잊으셨나요?</div>
+          </div>
+          <div class="loginButtonWrapper">
+            <div class="loginInformation">
+              내 컴퓨터가 아닌가요? 시크릿 브라우징 창을 사용하여 로그인하세요.
+            </div>
+            <div class="loginButtonContainer">
+              <a class="loginAccountBtn" href="#">계정 만들기</a>
+              <button class="loginNextBtn email-next-btn">다음</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="loginPagelangContainer">
+        <div class="langSelect">
+          <select>
+            <option value="korean">Korean</option>
+            <option value="english">English(United State)</option>
+            <option value="actual value 3">Chinese</option>
+          </select>
+        </div>
+        <div class="loginPageEtc">
+          <div>Help</div>
+          <div>Privacy</div>
+          <div>Terms</div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const emailNextBtn = document.querySelector(".email-next-btn");
+      const loginPageSection3 = document.querySelector(".loginPageSection3");
+      const loginPasswordContainer = document.querySelector(
+        ".loginPasswordContainer"
+      );
+
+      const email = document.querySelector(".email");
+      const password = document.querySelector(".password");
+      const loadingBar = document.querySelector(".loading-bar");
+
+      const nextPageEnterKey = () => {
+        if (email.value.trim().length > 0) {
+          loadingBar.classList.remove("start");
+          void loadingBar.offsetWidth;
+          loadingBar.classList.add("start");
+
+          setTimeout(() => {
+            loginPageSection3.classList.add("expand");
+            loginPageSection3.style.visibility = "visible";
+            loginPasswordContainer.style.display = "block";
+            email.value = "";
+          }, 1000);
+        }
+      };
+
+      email.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          nextPageEnterKey();
+        }
+      });
+
+      emailNextBtn.addEventListener("click", nextPageEnterKey);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container {
+        border: 1px solid black;
+        display: flex;
+        width: 500px;
+        height: 400px;
+      }
+      .sidebar {
+        border: 1px solid red;
+        width: 100px;
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .window {
+        border: 1px solid blue;
+        position: relative;
+        width: 400px;
+        height: 400px;
+      }
+
+      .door {
+        border: 1px solid pink;
+        background-color: pink;
+        display: none;
+        position: absolute;
+        right: 0;
+        width: 400px;
+        height: 400px;
+        overflow: hidden;
+      }
+
+      .expand {
+        animation-name: expand;
+        animation-duration: 3s;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes expand {
+        from {
+          width: 0;
+        }
+        to {
+          width: 400px;
+        }
+      }
+
+      .shrink {
+        animation-name: shrink;
+        animation-duration: 3s;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes shrink {
+        from {
+          width: 400px;
+        }
+        to {
+          width: 0;
+        }
+      }
+
+      .displayNone {
+        display: none;
+      }
+
+      .displayVisible {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar" id="sidebar"></div>
+      <div class="window" id="window"></div>
+    </div>
+
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const windowDiv = document.getElementById("window");
+      const numButtons = 10;
+      const doors = [];
+
+      for (let i = 1; i <= numButtons; i++) {
+        const button = document.createElement("button");
+        button.textContent = `제목${i}`;
+        button.classList.add("open");
+        button.dataset.target = `door${i}`;
+        sidebar.appendChild(button);
+
+        const door = document.createElement("div");
+        door.classList.add("door", "displayNone");
+        door.id = `door${i}`;
+        const closeButton = document.createElement("button");
+        closeButton.textContent = `close${i}`;
+        closeButton.classList.add("close");
+        door.appendChild(closeButton);
+        windowDiv.appendChild(door);
+
+        doors.push(door);
+      }
+
+      const openButtons = document.querySelectorAll(".open");
+
+      openButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const targetDoorId = button.dataset.target;
+          const targetDoor = document.getElementById(targetDoorId);
+
+          doors.forEach((door) => {
+            if (door.id === targetDoorId) {
+              door.classList.remove("shrink", "displayNone");
+              door.classList.add("expand", "displayVisible");
+            } else {
+              door.classList.remove("expand", "displayVisible");
+              door.classList.add("shrink");
+              setTimeout(() => {
+                door.classList.add("displayNone");
+              }, 3000);
+            }
+          });
+        });
+      });
+
+      const closeButtons = document.querySelectorAll(".close");
+
+      closeButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const targetDoor = button.parentElement;
+          targetDoor.classList.remove("expand");
+          targetDoor.classList.add("shrink");
+          setTimeout(() => {
+            targetDoor.classList.add("displayNone");
+          }, 3000);
+        });
+      });
+    </script>
+  </body>
+</html>

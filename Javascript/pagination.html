@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .list {
+        border: 1px solid black;
+        width: 50%;
+        height: 300px;
+        overflow-y: auto;
+      }
+
+      .pagination {
+        border: 1px solid black;
+        width: 50%;
+        height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="list"></div>
+    <div class="pagination"></div>
+    <script>
+      const container = document.querySelector(".list");
+      const paginationContainer = document.querySelector(".pagination");
+
+      const numberList = Array.from(Array(200), (_, index) => index + 1);
+      const maxPerPage = 5;
+      let currentPage = 0;
+      let currentSet = 0;
+      const buttonsPerSet = 5;
+
+      function renderPage(page) {
+        container.innerHTML = ""; // Clear previous contents
+        const start = page * maxPerPage;
+        const end = start + maxPerPage;
+        const pageItems = numberList.slice(start, end);
+
+        pageItems.forEach((item) => {
+          const div = document.createElement("div");
+          div.textContent = item;
+          container.appendChild(div);
+        });
+      }
+
+      function renderPagination(set) {
+        paginationContainer.innerHTML = ""; // Clear previous pagination buttons
+        const start = set * buttonsPerSet;
+        const end = start + buttonsPerSet;
+        const totalPages = Math.ceil(numberList.length / maxPerPage);
+
+        // Add Previous button if not on the first set
+        if (set > 0) {
+          const prevButton = document.createElement("button");
+          prevButton.type = "button";
+          prevButton.innerHTML = "Prev";
+          paginationContainer.appendChild(prevButton);
+
+          prevButton.addEventListener("click", () => {
+            currentSet--;
+            renderPagination(currentSet);
+          });
+        }
+
+        for (let i = start; i < end && i < totalPages; i++) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.innerHTML = i + 1;
+          paginationContainer.appendChild(button);
+
+          button.addEventListener("click", () => {
+            currentPage = i;
+            renderPage(currentPage);
+          });
+        }
+
+        // Add Next button if there are more sets to show
+        if (end < totalPages) {
+          const nextButton = document.createElement("button");
+          nextButton.type = "button";
+          nextButton.innerHTML = "Next";
+          paginationContainer.appendChild(nextButton);
+
+          nextButton.addEventListener("click", () => {
+            currentSet++;
+            renderPagination(currentSet);
+          });
+        }
+      }
+
+      // Initial render
+      renderPage(currentPage);
+      renderPagination(currentSet);
+    </script>
+  </body>
+</html>

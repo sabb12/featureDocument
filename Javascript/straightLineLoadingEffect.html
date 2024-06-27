@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Straight Line Loading Effect</title>
+    <style>
+      .loading-bar {
+        border: 1px solid black;
+        width: 76%;
+        height: 4px;
+        overflow: hidden;
+        background-color: #fff;
+        position: relative; /* Added to position the pseudo-element */
+      }
+
+      .loading-bar:before {
+        display: block;
+        position: absolute;
+        content: "";
+        left: 0;
+        width: 0;
+        height: 4px;
+        background-color: #ff6a00;
+        transition: none; /* Ensure no transition before animation starts */
+      }
+
+      .loading-bar.start:before {
+        animation: loading 2s linear 2 forwards;
+      }
+
+      @keyframes loading {
+        0% {
+          left: 0;
+          width: 30%;
+        }
+        50% {
+          width: 30%;
+        }
+        70% {
+          width: 70%;
+        }
+        80% {
+          left: 50%;
+        }
+        95% {
+          left: 100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading-bar"></div>
+    <button onclick="startLoading()">Start Loading</button>
+
+    <script>
+      function startLoading() {
+        const loadingBar = document.querySelector(".loading-bar");
+        loadingBar.classList.remove("start"); // Reset animation if it was running
+        void loadingBar.offsetWidth; // Trigger reflow to restart animation
+        loadingBar.classList.add("start");
+      }
+    </script>
+  </body>
+</html>

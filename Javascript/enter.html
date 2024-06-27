@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>JS Bin</title>
+  </head>
+  <body>
+    <input type="text" class="inputValue" />
+
+    <button class="btn">제출</button>
+    <div class="container"></div>
+
+    <script>
+      const container = document.querySelector(".container");
+      const inputValue = document.querySelector(".inputValue");
+      const btn = document.querySelector(".btn");
+
+      const addItem = () => {
+        if (inputValue.value.trim().length > 0) {
+          const div = document.createElement("div");
+          div.innerText = inputValue.value;
+          container.appendChild(div);
+          inputValue.value = "";
+        }
+      };
+
+      inputValue.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          addItem();
+        }
+      });
+
+      btn.addEventListener("click", addItem);
+    </script>
+  </body>
+</html>
