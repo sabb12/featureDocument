@@ -1,0 +1,66 @@
+.container {
+  border: 1px solid black;
+  display: flex;
+  width: 500px;
+  height: 400px;
+}
+
+.sidebar {
+  border: 1px solid red;
+  width: 100px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.window {
+  border: 1px solid blue;
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.door {
+  border: 1px solid pink;
+  background-color: pink;
+  display: none;
+  position: absolute;
+  right: 0;
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+}
+
+.expand {
+  animation-name: expand;
+  animation-duration: 3s; /* Adjust speed here */
+  animation-fill-mode: forwards;
+}
+
+@keyframes expand {
+  from {
+    width: 0;
+  }
+  to {
+    width: 400px;
+  }
+}
+
+.shrink {
+  animation-name: shrink;
+  animation-duration: 3s; /* Adjust speed here */
+  animation-fill-mode: forwards;
+}
+
+@keyframes shrink {
+  from {
+    width: 400px;
+  }
+  to {
+    width: 0;
+  }
+}
+
+.closing {
+  animation-name: shrink; /* Reusing the shrink animation for closing */
+}
