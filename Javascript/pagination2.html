@@ -40,29 +40,49 @@
     </div>
     <script>
       const numberList = Array.from(Array(20), (_, index) => index + 1);
-      let currentPage = 10;
+      let currentPage = 14;
       const maxPerPage = 9;
       const paginationDom = document.querySelector(".pagination");
 
       const getRenderedPaginationList = () => {
-        if (currentPage <= Math.floor(maxPerPage / 2)) {
-          return numberList.slice(0, maxPerPage);
+        let renderedList = [];
+
+        // Always show the first page
+        renderedList.push(1);
+
+        if (currentPage > Math.ceil(maxPerPage / 2) + 1) {
+          renderedList.push("...");
         }
-        if (currentPage > numberList.length - Math.floor(maxPerPage / 2)) {
-          return numberList.slice(
-            numberList.length - maxPerPage,
-            numberList.length
-          );
+
+        const start = Math.max(2, currentPage - Math.floor(maxPerPage / 2));
+        const end = Math.min(
+          numberList.length - 1,
+          currentPage + Math.floor(maxPerPage / 2)
+        );
+
+        for (let i = start; i <= end; i++) {
+          if (i !== 1 && i !== numberList.length) {
+            renderedList.push(i);
+          }
         }
-        const firstShownIndex = currentPage - 1 - Math.floor(maxPerPage / 2);
-        return numberList.slice(firstShownIndex, firstShownIndex + maxPerPage);
+
+        if (currentPage < numberList.length - Math.floor(maxPerPage / 2) - 1) {
+          renderedList.push("...");
+        }
+
+        // Always show the last page
+        if (numberList.length > 1) {
+          renderedList.push(numberList.length);
+        }
+
+        return renderedList;
       };
 
       const renderPagination = () => {
         paginationDom.innerHTML = ""; // Clear existing buttons
 
         // Add First button
-        if (currentPage > Math.ceil(maxPerPage / 2)) {
+        if (currentPage > 1) {
           paginationDom.insertAdjacentHTML(
             "beforeend",
             `<button type="button" class="nav_button" onclick="handlePageChange('first')">First</button>`
@@ -70,7 +90,7 @@
         }
 
         // Add Previous button
-        if (currentPage > Math.ceil(maxPerPage / 2)) {
+        if (currentPage > 1) {
           paginationDom.insertAdjacentHTML(
             "beforeend",
             `<button type="button" class="nav_button" onclick="handlePageChange('prev')">&laquo; Prev</button>`
@@ -79,16 +99,23 @@
 
         const renderedPaginationList = getRenderedPaginationList();
         renderedPaginationList.forEach((item) => {
-          paginationDom.insertAdjacentHTML(
-            "beforeend",
-            `<button type="button" class="button_page" aria-current="${
-              currentPage === item ? true : false
-            }" onclick='handleCurrentPage(this, ${item})'>${item}</button>`
-          );
+          if (item === "...") {
+            paginationDom.insertAdjacentHTML(
+              "beforeend",
+              `<span class="button_page" style="border: none;">${item}</span>`
+            );
+          } else {
+            paginationDom.insertAdjacentHTML(
+              "beforeend",
+              `<button type="button" class="button_page" aria-current="${
+                currentPage === item ? true : false
+              }" onclick='handleCurrentPage(this, ${item})'>${item}</button>`
+            );
+          }
         });
 
         // Add Next button
-        if (currentPage < numberList.length - Math.floor(maxPerPage / 2)) {
+        if (currentPage < numberList.length) {
           paginationDom.insertAdjacentHTML(
             "beforeend",
             `<button type="button" class="nav_button" onclick="handlePageChange('next')">Next &raquo;</button>`
@@ -96,7 +123,7 @@
         }
 
         // Add Last button
-        if (currentPage < numberList.length - Math.floor(maxPerPage / 2)) {
+        if (currentPage < numberList.length) {
           paginationDom.insertAdjacentHTML(
             "beforeend",
             `<button type="button" class="nav_button" onclick="handlePageChange('last')">Last</button>`
