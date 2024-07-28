@@ -1,0 +1,120 @@
+.responsive_example {
+  padding: 20px 5px;
+  .title {
+    font-size: 32px;
+    font-weight: bold;
+  }
+  .directory {
+    display: none;
+  }
+  .categorize_area {
+    position: relative;
+    padding: 10px 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    .title_categorize {
+      position: relative;
+      display: block;
+      padding-bottom: 10px;
+      /* // &:after {
+      //   position: absolute;
+      //   bottom: 0;
+      //   left: -10px;
+      //   right: -10px;
+      //   height: 1px;
+      //   background-color: black;
+      //   content: "";
+      // } */
+    }
+    .tab_category {
+      display: flex;
+      padding-top: 10px;
+      gap: 10px;
+      border-top: 1px solid black;
+      .button_tab {
+        width: 100%;
+      }
+      /* // margin: 0 -10px;
+      // .button_tab + .button_tab {
+      //   margin-left: 10px;
+      // }
+      // .button_tab:not(:first-child) {
+      //   margin-left: 10px;
+      // } */
+    }
+    .list_sub_tab {
+      height: 67px;
+      overflow-y: scroll;
+    }
+  }
+  .button_expand {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 50%;
+    background-color: transparent;
+  }
+  /* // 대체텍스트 */
+  .blind {
+    overflow: hidden;
+    position: absolute;
+    clip: rect(0 0 0 0);
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+  }
+  .image_area {
+    margin: 0 -5px;
+  }
+  .image_wrap {
+    display: inline-block;
+    width: 50%;
+    padding: 5px;
+    vertical-align: top;
+    text-align: center;
+    box-sizing: border-box;
+    img {
+      width: 100%;
+    }
+    .image_text {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+@media screen and (min-width: 500px) {
+  .responsive_example {
+    .categorize_area {
+      .list_sub_tab {
+        overflow: auto;
+        height: auto;
+        .item_sub_tab {
+          display: inline-block;
+          margin-right: 10px;
+        }
+      }
+    }
+    .image_wrap {
+      width: 33.33%;
+    }
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .responsive_example {
+    .image_area {
+      /* // 안쪽 고정(보통 pc 디자인)
+      //   width: 600px;
+      //   margin: 0 auto;
+
+      // 바깥 고정 (보통 모바일 디자인) */
+      padding: 0 50px;
+    }
+    .image_wrap {
+      width: 20%;
+    }
+  }
+}
