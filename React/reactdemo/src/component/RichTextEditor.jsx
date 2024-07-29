@@ -1,20 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
-import "../style/ResponsiveWebsite.css";
+import "../style/RichTextEditor.css";
 
 export default function RichTextEditor() {
   const textFieldRef = useRef(null);
+  const [spellCheck, setSpellCheck] = useState(true);
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const textField = textFieldRef.current.contentWindow.document;
-    textField.designMode = "On"; // Enable design mode in the iframe
+    // Set initial design mode for the contenteditable div
+    if (textFieldRef.current) {
+      textFieldRef.current.contentEditable = true;
+    }
   }, []);
 
   const handleButtonClick = (cmd) => {
-    const textField = textFieldRef.current.contentWindow.document;
+    const textField = textFieldRef.current;
+
     if (cmd === "insertImage" || cmd === "createLink") {
       let url = prompt("Enter link here:", "");
-      textField.execCommand(cmd, false, url);
+      document.execCommand(cmd, false, url);
       if (cmd === "insertImage") {
         const imgs = textField.querySelectorAll("img");
         imgs.forEach((item) => {
@@ -25,24 +29,21 @@ export default function RichTextEditor() {
         links.forEach((item) => {
           item.target = "_blank";
           item.addEventListener("mouseover", () => {
-            textField.designMode = "off";
+            document.execCommand("designMode", false, "off");
           });
           item.addEventListener("mouseout", () => {
-            textField.designMode = "on";
+            document.execCommand("designMode", false, "on");
           });
         });
       }
     } else if (cmd === "showCode") {
-      const textBody = textField.body;
-      if (show) {
-        textBody.innerHTML = textBody.textContent;
-        setShow(false);
-      } else {
-        textBody.textContent = textBody.innerHTML;
-        setShow(true);
+      const codeHtml = `<span style="background-color: lightgray; font-family: monospace; white-space: pre-wrap; display: inline-block;">${spellCheck}</span>`;
+      if (textFieldRef.current) {
+        textFieldRef.current.innerHTML += codeHtml;
       }
+      setShow(!show);
     } else {
-      textField.execCommand(cmd, false, null);
+      document.execCommand(cmd, false, null);
     }
   };
 
@@ -50,46 +51,51 @@ export default function RichTextEditor() {
     <div>
       <form>
         <button type="button" onClick={() => handleButtonClick("justifyLeft")}>
-          <i className="fa fa-align-left" aria-hidden="true"></i>
+          Left
         </button>
         <button
           type="button"
           onClick={() => handleButtonClick("justifyCenter")}
         >
-          <i className="fa fa-align-center" aria-hidden="true"></i>
+          Center
         </button>
         <button type="button" onClick={() => handleButtonClick("justifyFull")}>
-          <i className="fa fa-align-justify" aria-hidden="true"></i>
+          Justify
         </button>
         <button type="button" onClick={() => handleButtonClick("justifyRight")}>
-          <i className="fa fa-align-right" aria-hidden="true"></i>
+          Right
         </button>
         <button type="button" onClick={() => handleButtonClick("bold")}>
-          <i className="fa fa-bold" aria-hidden="true"></i>
+          Bold
         </button>
         <button type="button" onClick={() => handleButtonClick("italic")}>
-          <i className="fa fa-italic" aria-hidden="true"></i>
+          Italic
         </button>
         <button type="button" onClick={() => handleButtonClick("underline")}>
-          <i className="fa fa-underline" aria-hidden="true"></i>
+          Underline
         </button>
         <button
           type="button"
           onClick={() => handleButtonClick("insertUnorderedList")}
         >
-          <i className="fa fa-list-ul" aria-hidden="true"></i>
+          ul
         </button>
         <button type="button" onClick={() => handleButtonClick("insertImage")}>
-          <i className="fa fa-file-image-o" aria-hidden="true"></i>
+          Image
         </button>
         <button type="button" onClick={() => handleButtonClick("createLink")}>
-          <i className="fa fa-link" aria-hidden="true"></i>
+          Link
         </button>
         <button type="button" onClick={() => handleButtonClick("showCode")}>
-          <i className="fa fa-code" aria-hidden="true"></i>
+          Code
         </button>
       </form>
-      <iframe id="output" name="textField" ref={textFieldRef}></iframe>
+      <div
+        ref={textFieldRef}
+        className="editor"
+        contentEditable={true}
+        spellCheck={spellCheck}
+      />
     </div>
   );
 }

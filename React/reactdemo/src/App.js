@@ -8,9 +8,9 @@ import RichTextEditor from "./component/RichTextEditor";
 function App() {
   return (
     <div className="App">
-      <Slider />
+      {/* <Slider />
       <ResponsiveWebsite />
-      <Pagination1 />
+      <Pagination1 /> */}
       <RichTextEditor />
     </div>
   );

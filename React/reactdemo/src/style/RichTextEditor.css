@@ -1,0 +1,32 @@
+/* App.css */
+.code-block-container {
+  margin: 20px;
+}
+
+.toggle-button {
+  font-size: 18px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.editor {
+  width: 100%;
+  min-height: 100px; /* Ensures the div has an initial height */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: auto;
+  transition: background-color 0.3s ease;
+  white-space: pre-wrap; /* Ensures that whitespace and line breaks are preserved */
+}
+
+.editor.active {
+  background-color: lightgrey;
+}
+
+/* Optional: styling for placeholder text */
+.editor:empty::before {
+  content: attr(placeholder);
+  color: #888;
+  pointer-events: none;
+}
