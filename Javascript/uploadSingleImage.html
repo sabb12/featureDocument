@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Upload with Preview</title>
+    <style>
+      #image-preview {
+        display: block;
+        width: 300px;
+        height: auto;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Upload Image with Preview</h1>
+    <input type="file" id="file-input" accept="image/*" />
+    <img id="image-preview" alt="Image Preview" />
+    <button id="upload-button">Upload Image</button>
+
+    <script>
+      const fileInput = document.getElementById("file-input");
+      const imagePreview = document.getElementById("image-preview");
+      const uploadButton = document.getElementById("upload-button");
+
+      // Function to create an image preview
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            imagePreview.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Function to save the image to localStorage
+      const saveImageToLocalStorage = () => {
+        return new Promise((resolve, reject) => {
+          const file = fileInput.files[0];
+          if (!file) {
+            reject("No file selected");
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64Image = reader.result;
+            localStorage.setItem("uploadedImage", base64Image); // Store a single image
+            resolve();
+          };
+          reader.onerror = () => reject("Error reading file");
+          reader.readAsDataURL(file);
+        });
+      };
+
+      // Function to display the image from localStorage in the preview area
+      const displayImageFromLocalStorage = () => {
+        const uploadedImage = localStorage.getItem("uploadedImage");
+        if (uploadedImage) {
+          imagePreview.src = uploadedImage;
+        }
+      };
+
+      // Event listener for the upload button
+      uploadButton.addEventListener("click", () => {
+        saveImageToLocalStorage()
+          .then(() => {
+            alert("Image uploaded successfully!");
+            displayImageFromLocalStorage();
+          })
+          .catch((error) => {
+            alert(`Error: ${error}`);
+          });
+      });
+
+      // Initial display of the image from localStorage
+      displayImageFromLocalStorage();
+    </script>
+  </body>
+</html>
