@@ -5,78 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Image Upload with Preview</title>
     <style>
+      .imageContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        width: 200px;
+        height: 200px;
+      }
       #image-preview {
-        display: block;
-        width: 300px;
-        height: auto;
-        margin-top: 20px;
+        border: 1px solid black;
+        border-radius: 50%;
+        width: 150px;
+        height: 150px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .fileInput {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0;
+        cursor: pointer;
+        width: 150px;
+        height: 150px;
+        z-index: 2;
+      }
+
+      .buttonContainer {
+        text-align: center;
+        width: 200px;
       }
     </style>
   </head>
   <body>
-    <h1>Upload Image with Preview</h1>
-    <input type="file" id="file-input" accept="image/*" />
-    <img id="image-preview" alt="Image Preview" />
-    <button id="upload-button">Upload Image</button>
+    <h1>Upload Single Image</h1>
+    <div class="imageContainer">
+      <img id="image-preview" alt="Image Preview" />
+      <input type="file" id="file-input" class="fileInput" accept="image/*" />
+    </div>
+
+    <div class="buttonContainer">
+      <button id="upload-button">이미지 저장</button>
+      <button id="default-button">기본 이미지</button>
+    </div>
 
     <script>
       const fileInput = document.getElementById("file-input");
       const imagePreview = document.getElementById("image-preview");
       const uploadButton = document.getElementById("upload-button");
+      const defaultButton = document.getElementById("default-button");
 
-      // Function to create an image preview
-      fileInput.addEventListener("change", () => {
+      const defaultImageUrl = "https://picsum.photos/id/237/200/300";
+
+      const handleImageUpload = () => {
         const file = fileInput.files[0];
         if (file) {
           const reader = new FileReader();
           reader.onloadend = () => {
-            imagePreview.src = reader.result;
+            const base64Image = reader.result;
+            localStorage.setItem("uploadedImage", base64Image);
+            imagePreview.src = base64Image;
           };
+          reader.onerror = () => alert("Error reading file");
           reader.readAsDataURL(file);
         }
-      });
-
-      // Function to save the image to localStorage
-      const saveImageToLocalStorage = () => {
-        return new Promise((resolve, reject) => {
-          const file = fileInput.files[0];
-          if (!file) {
-            reject("No file selected");
-            return;
-          }
-
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64Image = reader.result;
-            localStorage.setItem("uploadedImage", base64Image); // Store a single image
-            resolve();
-          };
-          reader.onerror = () => reject("Error reading file");
-          reader.readAsDataURL(file);
-        });
       };
 
-      // Function to display the image from localStorage in the preview area
+      fileInput.addEventListener("change", handleImageUpload);
+
+      uploadButton.addEventListener("click", () => {
+        handleImageUpload();
+        alert("Image uploaded successfully!");
+      });
+
       const displayImageFromLocalStorage = () => {
         const uploadedImage = localStorage.getItem("uploadedImage");
         if (uploadedImage) {
           imagePreview.src = uploadedImage;
+        } else {
+          imagePreview.src = defaultImageUrl;
         }
       };
 
-      // Event listener for the upload button
-      uploadButton.addEventListener("click", () => {
-        saveImageToLocalStorage()
-          .then(() => {
-            alert("Image uploaded successfully!");
-            displayImageFromLocalStorage();
-          })
-          .catch((error) => {
-            alert(`Error: ${error}`);
-          });
+      defaultButton.addEventListener("click", () => {
+        localStorage.removeItem("uploadedImage");
+        imagePreview.src = defaultImageUrl;
       });
 
-      // Initial display of the image from localStorage
       displayImageFromLocalStorage();
     </script>
   </body>
