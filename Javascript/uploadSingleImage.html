@@ -58,27 +58,36 @@
 
       const defaultImageUrl = "https://picsum.photos/id/237/200/300";
 
+      let base64Image = ""; // Variable to store the selected image data
+
+      // Function to preview the uploaded image
       const handleImageUpload = () => {
         const file = fileInput.files[0];
         if (file) {
           const reader = new FileReader();
           reader.onloadend = () => {
-            const base64Image = reader.result;
-            localStorage.setItem("uploadedImage", base64Image);
-            imagePreview.src = base64Image;
+            base64Image = reader.result; // Store the base64 image in the variable
+            imagePreview.src = base64Image; // Show preview
           };
           reader.onerror = () => alert("Error reading file");
           reader.readAsDataURL(file);
         }
       };
 
+      // Add event listener to update preview on file input change
       fileInput.addEventListener("change", handleImageUpload);
 
+      // Save the currently previewed image to localStorage when "Save Image" button is clicked
       uploadButton.addEventListener("click", () => {
-        handleImageUpload();
-        alert("Image uploaded successfully!");
+        if (base64Image) {
+          localStorage.setItem("uploadedImage", base64Image);
+          alert("Image uploaded successfully!");
+        } else {
+          alert("Please select an image first.");
+        }
       });
 
+      // Display image from localStorage on page load
       const displayImageFromLocalStorage = () => {
         const uploadedImage = localStorage.getItem("uploadedImage");
         if (uploadedImage) {
@@ -88,11 +97,13 @@
         }
       };
 
+      // Reset to default image and clear localStorage when "Default Image" button is clicked
       defaultButton.addEventListener("click", () => {
         localStorage.removeItem("uploadedImage");
         imagePreview.src = defaultImageUrl;
       });
 
+      // Call the function to display the image on initial page load
       displayImageFromLocalStorage();
     </script>
   </body>
