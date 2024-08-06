@@ -3,7 +3,6 @@ import "../style/RichTextEditor.css";
 
 export default function RichTextEditor() {
   const textFieldRef = useRef(null);
-  const [spellCheck, setSpellCheck] = useState(true);
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -37,11 +36,33 @@ export default function RichTextEditor() {
         });
       }
     } else if (cmd === "showCode") {
-      const codeHtml = `<span style="background-color: lightgray; font-family: monospace; white-space: pre-wrap; display: inline-block;">${spellCheck}</span>`;
-      if (textFieldRef.current) {
-        textFieldRef.current.innerHTML += codeHtml;
+      // Toggle a code block
+      if (window.getSelection) {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          const selectedText = range.toString();
+
+          // Check if the selected text is already in a code block
+          const parentElement = range.commonAncestorContainer.parentElement;
+          if (parentElement && parentElement.tagName === "CODE") {
+            // If it's already a code block, unwrap it
+            parentElement.outerHTML = parentElement.innerHTML;
+          } else {
+            // Otherwise, wrap it in a <code> block
+            const codeElement = document.createElement("code");
+            codeElement.style.backgroundColor = "lightgray";
+            codeElement.style.fontFamily = "monospace";
+            codeElement.style.whiteSpace = "pre-wrap";
+            codeElement.style.display = "inline-block";
+
+            codeElement.textContent = selectedText;
+
+            range.deleteContents();
+            range.insertNode(codeElement);
+          }
+        }
       }
-      setShow(!show);
     } else {
       document.execCommand(cmd, false, null);
     }
@@ -90,12 +111,7 @@ export default function RichTextEditor() {
           Code
         </button>
       </form>
-      <div
-        ref={textFieldRef}
-        className="editor"
-        contentEditable={true}
-        spellCheck={spellCheck}
-      />
+      <div ref={textFieldRef} className="editor" contentEditable={true} />
     </div>
   );
 }

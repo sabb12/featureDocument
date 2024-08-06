@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-export default function MyComponent() {
+export default function QuerySelectorAllUsingRef() {
   const containerRef = useRef(null);
 
   useEffect(() => {
