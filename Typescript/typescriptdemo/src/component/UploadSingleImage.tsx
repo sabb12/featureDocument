@@ -1,9 +1,9 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect } from "react";
 
 // Define the functional component
 export default function UploadSingleImage() {
   // State to store image source
-  const [imageSrc, setImageSrc] = useState<string>("");
+  const [imageSrc, setImageSrc] = useState("");
   const defaultImageUrl = "https://picsum.photos/id/237/200/300";
 
   // Load image from localStorage on component mount
@@ -17,22 +17,24 @@ export default function UploadSingleImage() {
   }, []);
 
   // Handle image upload and preview
-  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (event) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64Image = reader.result as string;
-        setImageSrc(base64Image);
+      // Create a URL for the uploaded file
+      const objectUrl = URL.createObjectURL(file);
+      setImageSrc(objectUrl);
+
+      // Clean up the URL object when the component unmounts or the file changes
+      return () => {
+        URL.revokeObjectURL(objectUrl);
       };
-      reader.onerror = () => alert("Error reading file");
-      reader.readAsDataURL(file);
     }
   };
 
   // Save the image to localStorage
   const handleUpload = () => {
     if (imageSrc && imageSrc !== defaultImageUrl) {
+      // Store the object URL directly in localStorage
       localStorage.setItem("uploadedImage", imageSrc);
       alert("Image uploaded successfully!");
     } else {

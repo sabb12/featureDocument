@@ -1,117 +1,83 @@
-import React, { useEffect, useRef, useState } from "react";
-import "../style/RichTextEditor.css";
+import React, { useState, useRef, useEffect, SyntheticEvent } from "react";
 
-export default function RichTextEditor() {
-  const textFieldRef = useRef(null);
-  const [show, setShow] = useState(false);
+export default function QuestionCreateAndModifyPage() {
+  const [textAreaInputValue, setTextAreaInputValue] = useState("");
+  const [formattedText, setFormattedText] = useState("");
+  const [tagInptValue, setTagInputValue] = useState("");
+  const [tagOutputvalue, setTagOutputValue] = useState([]);
+  const textAreaRef = useRef(null);
+  const [applicationContent, setApplicationContent] = useState("");
 
   useEffect(() => {
-    // Set initial design mode for the contenteditable div
-    if (textFieldRef.current) {
-      textFieldRef.current.contentEditable = true;
-    }
-  }, []);
-
-  const handleButtonClick = (cmd) => {
-    const textField = textFieldRef.current;
-
-    if (cmd === "insertImage" || cmd === "createLink") {
-      let url = prompt("Enter link here:", "");
-      document.execCommand(cmd, false, url);
-      if (cmd === "insertImage") {
-        const imgs = textField.querySelectorAll("img");
-        imgs.forEach((item) => {
-          item.style.maxWidth = "200px";
-        });
-      } else {
-        const links = textField.querySelectorAll("a");
-        links.forEach((item) => {
-          item.target = "_blank";
-          item.addEventListener("mouseover", () => {
-            document.execCommand("designMode", false, "off");
-          });
-          item.addEventListener("mouseout", () => {
-            document.execCommand("designMode", false, "on");
-          });
-        });
-      }
-    } else if (cmd === "showCode") {
-      // Toggle a code block
-      if (window.getSelection) {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          const selectedText = range.toString();
-
-          // Check if the selected text is already in a code block
-          const parentElement = range.commonAncestorContainer.parentElement;
-          if (parentElement && parentElement.tagName === "CODE") {
-            // If it's already a code block, unwrap it
-            parentElement.outerHTML = parentElement.innerHTML;
-          } else {
-            // Otherwise, wrap it in a <code> block
-            const codeElement = document.createElement("code");
-            codeElement.style.backgroundColor = "lightgray";
-            codeElement.style.fontFamily = "monospace";
-            codeElement.style.whiteSpace = "pre-wrap";
-            codeElement.style.display = "inline-block";
-
-            codeElement.textContent = selectedText;
-
-            range.deleteContents();
-            range.insertNode(codeElement);
-          }
+    const formatTextToHTML = (text) => {
+      const regex = /`([^`]*)`/g;
+      const parts = [];
+      let lastIndex = 0;
+      let match;
+      while ((match = regex.exec(text)) !== null) {
+        const start = match.index;
+        const end = regex.lastIndex;
+        const before = text.slice(lastIndex, start);
+        const code = match[1];
+        if (before) {
+          parts.push(before.replace(/\n/g, "<br>"));
         }
+        parts.push(
+          `<span style="background-color: lightgray; font-family: monospace; white-space: pre-wrap; display: inline-block;">${code.replace(
+            /\n/g,
+            "<br>"
+          )}</span>`
+        );
+        lastIndex = end;
       }
-    } else {
-      document.execCommand(cmd, false, null);
-    }
+      if (lastIndex < text.length) {
+        parts.push(text.slice(lastIndex).replace(/\n/g, "<br>"));
+      }
+      return parts.join("");
+    };
+    setFormattedText(formatTextToHTML(textAreaInputValue));
+  }, [textAreaInputValue]);
+
+  const wrapTextInBackticks = () => {
+    const textarea = textAreaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textAreaInputValue.slice(start, end);
+    const before = textAreaInputValue.slice(0, start);
+    const after = textAreaInputValue.slice(end);
+
+    // Wrap the selected text with backticks
+    const newText = `${before}\`${selectedText}\`${after}`;
+    setTextAreaInputValue(newText);
   };
 
   return (
-    <div>
-      <form>
-        <button type="button" onClick={() => handleButtonClick("justifyLeft")}>
-          Left
-        </button>
-        <button
-          type="button"
-          onClick={() => handleButtonClick("justifyCenter")}
-        >
-          Center
-        </button>
-        <button type="button" onClick={() => handleButtonClick("justifyFull")}>
-          Justify
-        </button>
-        <button type="button" onClick={() => handleButtonClick("justifyRight")}>
-          Right
-        </button>
-        <button type="button" onClick={() => handleButtonClick("bold")}>
-          Bold
-        </button>
-        <button type="button" onClick={() => handleButtonClick("italic")}>
-          Italic
-        </button>
-        <button type="button" onClick={() => handleButtonClick("underline")}>
-          Underline
-        </button>
-        <button
-          type="button"
-          onClick={() => handleButtonClick("insertUnorderedList")}
-        >
-          ul
-        </button>
-        <button type="button" onClick={() => handleButtonClick("insertImage")}>
-          Image
-        </button>
-        <button type="button" onClick={() => handleButtonClick("createLink")}>
-          Link
-        </button>
-        <button type="button" onClick={() => handleButtonClick("showCode")}>
-          Code
-        </button>
-      </form>
-      <div ref={textFieldRef} className="editor" contentEditable={true} />
-    </div>
+    <section className="application_wrapper">
+      {/* <h1 className="headerTitle">{questionId ? "질문 수정" : "질문 작성"}</h1> */}
+      <article className="application_container1">
+        <div className="attempt_container">
+          <h1 className="subTitle">무엇을 시도하셨고 무엇을 기대하셨습니까?</h1>
+          <h6 className="descriptionTitle">
+            무엇을 시도했는지. 무엇이 일어날 것이라고 예상했는지. 그리고 실제로
+            어떤 결과가 나타났는지 설명하세요.(단 최소 20자)
+          </h6>
+          <div className="richEditorText_container">
+            <button onClick={wrapTextInBackticks}>{"</>"}</button>
+            <div>
+              <textarea
+                ref={textAreaRef}
+                value={textAreaInputValue}
+                onChange={(e) => setTextAreaInputValue(e.target.value)}
+                style={{ width: "100%", height: "200px" }}
+              />
+              <div
+                className="here"
+                dangerouslySetInnerHTML={{ __html: formattedText }}
+              />
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
   );
 }

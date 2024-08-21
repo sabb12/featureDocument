@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Rich Text Editor</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -52,7 +52,7 @@
       }
       .options label,
       .options select {
-        font-family: "Poppings", sans-serif;
+        font-family: "Poppins", sans-serif;
       }
       .input-wrapper {
         display: flex;
@@ -83,25 +83,36 @@
         padding: 20px;
         height: 50vh;
         overflow-y: auto;
+        font-family: "Courier New", monospace;
       }
-
       #text-input a {
         cursor: pointer;
       }
-
+      #text-input pre {
+        background-color: #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        font-family: "Courier New", monospace;
+        white-space: pre-wrap;
+        overflow: auto;
+      }
+      #text-input .keyword {
+        color: #007acc;
+        font-weight: bold;
+      }
       .active {
         background-color: #e0e9ff;
       }
       img {
-        width: 200px;
-        height: 200px;
+        width: 100%; /* Ensure images fit within the container */
+        height: auto;
       }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="options">
-        <!-- Text Format-->
+        <!-- Text Format -->
         <button id="bold" class="option-button format">
           <i class="fa-solid fa-bold"></i>
         </button>
@@ -129,7 +140,7 @@
           <i class="fa-solid fa-list"></i>
         </button>
 
-        <!-- undo/redo-->
+        <!-- Undo/Redo -->
         <button id="undo" class="option-button">
           <i class="fa-solid fa-rotate-left"></i>
         </button>
@@ -179,7 +190,7 @@
         <select id="fontName" class="adv-option-button"></select>
         <select id="fontSize" class="adv-option-button"></select>
 
-        <!-- Font -->
+        <!-- Font Colors -->
         <div class="input-wrapper">
           <input type="color" id="foreColor" class="adv-option-button" />
           <label for="foreColor">Font Color</label>
@@ -200,11 +211,17 @@
           multiple
           style="display: none"
         />
+
+        <!-- Code Block -->
+        <button id="codeBlock" class="option-button">
+          <i class="fa-solid fa-code"></i>
+        </button>
       </div>
       <div id="text-input" contenteditable="true"></div>
     </div>
 
     <script>
+      // Initialize variables
       let optionsButtons = document.querySelectorAll(".option-button");
       let advancedOptionButtons =
         document.querySelectorAll(".adv-option-button");
@@ -229,24 +246,21 @@
         "Courier New",
         "cursive",
       ];
-
+      let codeArray = [];
       // Initial Settings
       const initializer = () => {
-        // function calls for highlighting buttons
         highlighter(alignButtons, true);
         highlighter(spacingButtons, true);
-        highlighter(formatButtons, false);
+        highlighter(formatButtons, true);
         highlighter(scriptButtons, true);
 
-        // create options for font names
-        fontList.map((value) => {
+        fontList.forEach((value) => {
           let option = document.createElement("option");
           option.value = value;
           option.innerHTML = value;
           fontName.appendChild(option);
         });
 
-        // fontSize allows only till 7
         for (let i = 1; i <= 7; i++) {
           let option = document.createElement("option");
           option.value = i;
@@ -254,28 +268,29 @@
           fontSizeRef.appendChild(option);
         }
         fontSizeRef.value = 1;
+        console.log("codeArray2: ", codeArray);
       };
 
-      // Main logic
+      // Modify text content
       const modifyText = (command, defaultUi, value) => {
         document.execCommand(command, defaultUi, value);
       };
 
-      // For basic operations that don't need a value parameter
+      // Basic operations without value parameter
       optionsButtons.forEach((button) => {
         button.addEventListener("click", () => {
           modifyText(button.id, false, null);
         });
       });
 
-      // Options that require value parameter (e.g., fonts, colors)
+      // Advanced operations requiring a value parameter
       advancedOptionButtons.forEach((button) => {
         button.addEventListener("change", () => {
           modifyText(button.id, false, button.value);
         });
       });
 
-      // Link creation
+      // Create or update link
       linkButton.addEventListener("click", () => {
         let userLink = prompt("Enter a URL");
         if (/http/i.test(userLink)) {
@@ -286,15 +301,12 @@
         }
       });
 
-      // Highlight clicked button
+      // Highlight active button
       const highlighter = (className, needsRemoval) => {
         className.forEach((button) => {
           button.addEventListener("click", () => {
             if (needsRemoval) {
-              let alreadyActive = false;
-              if (button.classList.contains("active")) {
-                alreadyActive = true;
-              }
+              let alreadyActive = button.classList.contains("active");
               highlighterRemover(className);
               if (!alreadyActive) {
                 button.classList.add("active");
@@ -312,19 +324,18 @@
         });
       };
 
-      // Function to insert images into the content editable div
+      // Insert images into the contenteditable div
       const insertImages = (files) => {
         for (let file of files) {
           let reader = new FileReader();
           reader.onload = (event) => {
             let img = document.createElement("img");
             img.src = event.target.result;
-            img.style.maxWidth = "100%"; // Adjust the image size to fit the container
+            img.style.maxWidth = "100%";
             const range = document.getSelection().getRangeAt(0);
             range.insertNode(img);
             range.collapse(false);
 
-            // Create a space after the image to allow text input
             const space = document.createTextNode(" ");
             range.insertNode(space);
             range.setStartAfter(space);
@@ -336,17 +347,17 @@
         }
       };
 
-      // Add event listener to the image button to open the file input dialog
+      // Open file input dialog for images
       imageButton.addEventListener("click", () => {
         imageInput.click();
       });
 
-      // Add event listener to handle the image file input change
+      // Handle image file input change
       imageInput.addEventListener("change", () => {
         insertImages(imageInput.files);
       });
 
-      // Make links open in a new tab
+      // Open links in a new tab
       writingArea.addEventListener("click", (e) => {
         if (e.target.tagName === "A") {
           e.preventDefault();
@@ -354,8 +365,47 @@
         }
       });
 
+      // Insert a code block
+      const insertCodeBlock = () => {
+        const codeBlock = document.createElement("pre");
+        // codeBlock.style.color = "red"
+        codeBlock.contentEditable = "true";
+
+        const range = document.getSelection().getRangeAt(0);
+        range.insertNode(codeBlock);
+        range.collapse(false);
+
+        const newLine = document.createElement("br");
+        range.insertNode(newLine);
+        range.setStartAfter(newLine);
+        range.collapse(true);
+
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(range);
+      };
+
+      // Add event listener for the code block button
+      document
+        .getElementById("codeBlock")
+        .addEventListener("click", insertCodeBlock);
+
       // Initialize the editor
       initializer();
+
+      // Handle Enter key to insert <br> instead of a new paragraph
+      writingArea.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const range = document.getSelection().getRangeAt(0);
+          const br = document.createElement("br");
+          range.deleteContents();
+          range.insertNode(br);
+          range.setStartAfter(br);
+          range.collapse(true);
+          document.getSelection().removeAllRanges();
+          document.getSelection().addRange(range);
+        }
+      });
     </script>
   </body>
 </html>

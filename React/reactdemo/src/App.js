@@ -5,6 +5,7 @@ import ResponsiveWebsite from "./component/ResponsiveWebsite";
 import Pagination1 from "./component/Pagination1";
 import RichTextEditor from "./component/RichTextEditor";
 import UploadSingleImage from "./component/UploadSingleImage";
+import UploadMultiImage from "./component/UploadMultiImage";
 
 function App() {
   return (
@@ -12,8 +13,9 @@ function App() {
       {/* <Slider />
       <ResponsiveWebsite />
       <Pagination1 /> */}
-      <UploadSingleImage />
-      {/* <RichTextEditor /> */}
+      {/* <UploadSingleImage /> */}
+      {/* <UploadMultiImage /> */}
+      <RichTextEditor />
     </div>
   );
 }
